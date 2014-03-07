@@ -2,31 +2,19 @@
 # = Class: wpcli
 
 class wpcli (
-  $branch      = $wpcli::params::branch,
-  $destination = $wpcli::params::destination,
-  $symlink     = $wpcli::params::symlink,
-  $repo        = $wpcli::params::repo,
+  $destination = '/usr/local/bin/wp',
 
-) inherits wpcli::params {
+) {
 
   exec { 'fetch-wpcli':
     cwd     => '/tmp',
-    command => "/usr/bin/git clone --branch ${branch} ${repo}",
-    creates => '/tmp/wp-cli',
-    require => Package['git'],
+    command => 'curl -L https://raw.github.com/wp-cli/builds/gh-pages/phar/wp-cli.phar > wp-cli.phar',
+    creates => '/tmp/wp-cli.phar',
   }
 
   file { $destination:
-    ensure  => directory,
-    recurse => true,
-    purge   => true,
-    source  => '/tmp/wp-cli',
+    ensure  => file,
+    source  => '/tmp/wp-cli.phar',
     require => Exec['fetch-wpcli'],
-  }
-
-  file { $symlink:
-    ensure  => link,
-    target  => "${destination}/wpcli.php",
-    require => File[$destination],
   }
 }
