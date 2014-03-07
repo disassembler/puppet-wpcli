@@ -12,7 +12,7 @@ class wpcli (
   exec { 'fetch-wpcli':
     cwd     => '/tmp',
     command => "/usr/bin/git clone --branch ${branch} ${repo}",
-    creates => '/tmp/wpcli',
+    creates => '/tmp/wp-cli',
     require => Package['git'],
   }
 
@@ -20,7 +20,7 @@ class wpcli (
     ensure  => directory,
     recurse => true,
     purge   => true,
-    source  => '/tmp/wpcli',
+    source  => '/tmp/wp-cli',
     require => Exec['fetch-wpcli'],
   }
 
